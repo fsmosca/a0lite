@@ -32,3 +32,18 @@ cutechess-cli -concurrency $CONCUR \
               -resign movecount=5 score=900 \
               -each timemargin=2000
 ```
+
+### Windows 10 setup
+#### Fixing an issue in numpy
+After the installation of badgyal, if you encounter an issue like this:  
+`ImportError: numpy.core.multiarray failed to import`  
+uninstall numpy and use numpy==1.19.3  
+* pip uninstall numpy
+* pip install numpy==1.19.3
+
+#### Winboard GUI
+Typical command line:  
+`"python.exe -u engine.py" -fd "D:\Chess\a0lite" -fUCI`
+
+#### Arena and Cutechess GUI
+Use the a0lite.bat as an engine.
