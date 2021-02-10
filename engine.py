@@ -103,7 +103,7 @@ def main():
         elif tokens[0] == "quit":
             exit(0)
         elif tokens[0] == "isready":
-            if nn == None or option_change:
+            if nn is None or option_change:
                 nn = load_network(net_name=net_name, use_cuda=use_cuda, num_threads=num_threads)
             option_change = False
             send("readyok")
@@ -141,11 +141,11 @@ def main():
                     my_time = btime/(TIMEDIV*1000.0)
                 if my_time < MINTIME:
                     my_time = MINTIME
-            if nn == None or option_change:
+            if nn is None or option_change:
                 nn = load_network(net_name=net_name, use_cuda=use_cuda, num_threads=num_threads)
 
 
-            if my_time != None:
+            if my_time is not None:
                 best, score = search.UCT_search(board, 1000000, net=nn, C=C, max_time=my_time, send=send)
             else:
                 best, score = search.UCT_search(board, my_nodes, net=nn, C=C, send=send)
