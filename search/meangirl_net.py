@@ -2,9 +2,9 @@ import badgyal
 import chess
 
 class MeanGirlNet:
-    def __init__(self, cuda=True):
+    def __init__(self, cuda=True, num_threads=1):
         super().__init__()
-        self.net = badgyal.MGNet(cuda=cuda)
+        self.net = badgyal.MGNet(cuda=cuda, num_threads=num_threads)
 
     def evaluate(self, board : chess.Board):
         result = None
