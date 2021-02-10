@@ -4,6 +4,7 @@ import chess.pgn
 import sys
 import traceback
 
+
 CACHE_SIZE = 200000
 MINTIME = 0.1
 TIMEDIV = 25.0
@@ -14,17 +15,20 @@ C = 3.0
 logfile = open("a0lite.log", "w")
 LOG = True
 
+
 def log(msg):
     if LOG:
         logfile.write(str(msg))
         logfile.write("\n")
         logfile.flush()
 
+
 def send(str):
     log(">{}".format(str))
     sys.stdout.write(str)
     sys.stdout.write("\n")
     sys.stdout.flush()
+
 
 def process_position(tokens):
     board = chess.Board()
@@ -49,9 +53,6 @@ def process_position(tokens):
     if board.can_claim_draw():
         board.clear_stack()
     return board
-
-
-
 
 
 def load_network(net_name='meangirl', use_cuda=False, num_threads=1):
@@ -144,12 +145,12 @@ def main():
             if nn is None or option_change:
                 nn = load_network(net_name=net_name, use_cuda=use_cuda, num_threads=num_threads)
 
-
             if my_time is not None:
                 best, score = search.UCT_search(board, 1000000, net=nn, C=C, max_time=my_time, send=send)
             else:
                 best, score = search.UCT_search(board, my_nodes, net=nn, C=C, send=send)
             send("bestmove {}".format(best))
+
 
 try:
     main()
