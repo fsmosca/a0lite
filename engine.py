@@ -54,12 +54,12 @@ def process_position(tokens):
 
 
 
-def load_network():
+def load_network(net_name='meangirl', use_cuda=False, num_threads=1):
     log("Loading network")
 
-    #net = search.EPDLRUNet(search.BadGyalNet(cuda=True), CACHE_SIZE)
-    net = search.EPDLRUNet(search.MeanGirlNet(cuda=False), CACHE_SIZE)
-    return net
+    if net_name == 'badgyal':
+        return search.EPDLRUNet(search.BadGyalNet(cuda=use_cuda, num_threads=num_threads), CACHE_SIZE)
+    return search.EPDLRUNet(search.MeanGirlNet(cuda=use_cuda, num_threads=num_threads), CACHE_SIZE)
 
 
 def main():
@@ -67,6 +67,10 @@ def main():
     send("A0 Lite")
     board = chess.Board()
     nn = None
+    num_threads = 1
+    use_cuda = False
+    net_name = 'meangirl'
+    option_change = False
 
     while True:
         line = sys.stdin.readline()
@@ -79,12 +83,29 @@ def main():
         if tokens[0] == "uci":
             send('id name A0 Lite')
             send('id author Dietrich Kappe')
+            send('option name TorchCPUThreads type spin default 1 min 1 max 128')
+            send('option name UseCuda type check default false')
+            send('option name NetName type combo default meangirl var badgyal var meangirl')
             send('uciok')
+        elif tokens[0] == "setoption":
+            opt_name, opt_value = tokens[2].lower(), tokens[4].lower()
+            if opt_name == 'torchcputhreads':
+                num_threads = min(128, max(int(opt_value), 1))
+                option_change = True
+            elif opt_name == 'usecuda':
+                use_cuda = True if opt_value == 'true' else False
+                option_change = True
+            elif opt_name == 'netname':
+                net_name = opt_value
+                option_change = True
+            if option_change:
+                send(f'info string {tokens[2]} is set to {tokens[4]}')
         elif tokens[0] == "quit":
             exit(0)
         elif tokens[0] == "isready":
-            if nn == None:
-                nn = load_network()
+            if nn == None or option_change:
+                nn = load_network(net_name=net_name, use_cuda=use_cuda, num_threads=num_threads)
+            option_change = False
             send("readyok")
         elif tokens[0] == "ucinewgame":
             board = chess.Board()
@@ -120,8 +141,8 @@ def main():
                     my_time = btime/(TIMEDIV*1000.0)
                 if my_time < MINTIME:
                     my_time = MINTIME
-            if nn == None:
-                nn = load_network()
+            if nn == None or option_change:
+                nn = load_network(net_name=net_name, use_cuda=use_cuda, num_threads=num_threads)
 
 
             if my_time != None:
