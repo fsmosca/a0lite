@@ -8,6 +8,19 @@ You will need to install [badgyal](https://github.com/dkappe/badgyal) for the ne
 
 By default it uses MeanGirl-8 (32x4) net on CPU. Plays about ~2050 CCRL in this configuration. The shell script `a0lite.sh` works as a uci engine. You can find a log file, `a0lite.log` in the same dir as the script.
 
+#### Engine options
+
+```python
+A0 Lite
+uci
+id name A0 Lite
+id author Dietrich Kappe
+option name TorchCPUThreads type spin default 1 min 1 max 128
+option name UseCuda type check default false
+option name NetName type combo default meangirl var badgyal var meangirl
+uciok
+```
+
 Here is a sample cutechess-cli script for running a match:
 
 ```
